@@ -38,7 +38,7 @@ def call(Map config) {
 
     container('node811-builder') {
       stage('Build') {
-        npm run "build"
+        npm "run build"
       }
 
       stage('Package') {
