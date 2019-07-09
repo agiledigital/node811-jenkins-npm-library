@@ -28,8 +28,12 @@ def call(Map config) {
     }
 
     stage('Test') {
-      npm 'test --ci --testResultsProcessor="jest-junit"'
-      junit allowEmptyResults: true, testResults: testOutput
+      withEnv([
+        "CI=true"
+      ]) {
+        npm 'test --ci --testResultsProcessor="jest-junit"'
+        junit allowEmptyResults: true, testResults: testOutput
+      }
     }
 
   }
