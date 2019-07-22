@@ -31,7 +31,7 @@ def call(Map config) {
       withEnv([
         "CI=true"
       ]) {
-        npm 'test --ci --testResultsProcessor="jest-junit"'
+        npm 'test'
         junit allowEmptyResults: true, testResults: testOutput
       }
     }
