@@ -26,8 +26,8 @@ def call(Map config) {
     stage('Install dependencies') {
       npm "install"
       
-      // Bootstrap the packages.
-      npm 'run bootstrap'
+      // Bootstrap and build the packages, because projects may depend on other component's artefacts.
+      npm 'run build'
     }
 
     stage('Test') {
