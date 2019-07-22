@@ -32,7 +32,8 @@ def call(Map config) {
 
     stage('Test') {
       withEnv([
-        "CI=true"
+        "CI=true",
+        "TZ=UTC"
       ]) {
         npm 'test'
         junit allowEmptyResults: true, testResults: testOutput
