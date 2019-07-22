@@ -25,6 +25,9 @@ def call(Map config) {
 
     stage('Install dependencies') {
       npm "install"
+      
+      // Bootstrap the packages.
+      npm 'run bootstrap'
     }
 
     stage('Test') {
