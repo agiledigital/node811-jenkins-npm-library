@@ -6,6 +6,7 @@ def call(Map config) {
 
   def artifactDir = "${config.project}-${config.component}-artifacts"
   def testOutput = "${config.project}-${config.component}-tests.xml"
+  def testVideoOutput = "${config.project}-${config.component}-test-videos"
 
   final npm = { cmd ->
     ansiColor('xterm') {
@@ -37,6 +38,16 @@ def call(Map config) {
       ]) {
         npm 'test'
         junit allowEmptyResults: true, testResults: testOutput
+        
+        sh "mkdir -p ${testVideoOutput}"
+        
+        if(fileExists("${config.baseDir}/cypress/videos")) {
+          sh "mv ${config.baseDir}/cypress/videos ${testVideoOutput}"
+        }
+        
+        def integrationTestTarName = "${config.project}-${config.component}-${config.buildNumber}-e2e.tar.gz"
+        sh "tar -czf \"${integrationTestTarName}\" -C \"${testVideoOutput}\" ."
+        archiveArtifacts integrationTestTarName
       }
     }
 
