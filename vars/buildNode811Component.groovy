@@ -31,29 +31,31 @@ def call(Map config) {
       npm 'run build'
     }
 
-    stage('Test') {
-      withEnv([
-        "CI=true",
-        "TZ=UTC"
-      ]) {
-        npm 'test'
-        junit allowEmptyResults: true, testResults: testOutput
-      }
-    }
-    
-    post {
-      always {
-        echo "Archiving E2E test videos"
-        sh "mkdir -p ${testVideoOutput}"
-
-        if(fileExists("${config.baseDir}/cypress/videos")) {
-          sh "mv ${config.baseDir}/cypress/videos ${testVideoOutput}"
+    try {
+      stage('Test') {
+        withEnv([
+          "CI=true",
+          "TZ=UTC"
+        ]) {
+          npm 'test'
+          junit allowEmptyResults: true, testResults: testOutput
         }
-
-        def integrationTestTarName = "${config.project}-${config.component}-${config.buildNumber}-e2e.tar.gz"
-        sh "tar -czf \"${integrationTestTarName}\" -C \"${testVideoOutput}\" ."
-        archiveArtifacts integrationTestTarName  
       }
+    } catch (e) {
+      echo "Archiving E2E test videos"
+      sh "mkdir -p ${testVideoOutput}"
+
+      if(fileExists("${config.baseDir}/cypress/videos")) {
+        sh "mv ${config.baseDir}/cypress/videos ${testVideoOutput}"
+      }
+
+      def integrationTestTarName = "${config.project}-${config.component}-${config.buildNumber}-e2e.tar.gz"
+      sh "tar -czf \"${integrationTestTarName}\" -C \"${testVideoOutput}\" ."
+      archiveArtifacts integrationTestTarName
+      
+      currentBuild.result = 'FAILED'
+      
+      throw e
     }
   }
 
