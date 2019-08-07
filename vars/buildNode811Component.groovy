@@ -38,7 +38,10 @@ def call(Map config) {
       ]) {
         npm 'test'
         junit allowEmptyResults: true, testResults: testOutput
-        
+      }
+    }
+    
+    stage('Save Test Artifacts') {
         sh "mkdir -p ${testVideoOutput}"
         
         if(fileExists("${config.baseDir}/cypress/videos")) {
@@ -47,10 +50,8 @@ def call(Map config) {
         
         def integrationTestTarName = "${config.project}-${config.component}-${config.buildNumber}-e2e.tar.gz"
         sh "tar -czf \"${integrationTestTarName}\" -C \"${testVideoOutput}\" ."
-        archiveArtifacts integrationTestTarName
-      }
+        archiveArtifacts integrationTestTarName  
     }
-
   }
 
   if(config.stage == 'dist') {
