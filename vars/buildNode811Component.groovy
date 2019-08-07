@@ -32,27 +32,23 @@ def call(Map config) {
     }
 
     stage('Test') {
-      steps {
-        catchError {
-          withEnv([
-            "CI=true",
-            "TZ=UTC"
-          ]) {
-            npm 'test'
-            junit allowEmptyResults: true, testResults: testOutput
-          }
-        }
-        
-        sh "mkdir -p ${testVideoOutput}"
-        
-        if(fileExists("${config.baseDir}/cypress/videos")) {
-          sh "mv ${config.baseDir}/cypress/videos ${testVideoOutput}"
-        }
-        
-        def integrationTestTarName = "${config.project}-${config.component}-${config.buildNumber}-e2e.tar.gz"
-        sh "tar -czf \"${integrationTestTarName}\" -C \"${testVideoOutput}\" ."
-        archiveArtifacts integrationTestTarName  
+      withEnv([
+        "CI=true",
+        "TZ=UTC"
+      ]) {
+        npm 'test'
+        junit allowEmptyResults: true, testResults: testOutput
       }
+
+      sh "mkdir -p ${testVideoOutput}"
+
+      if(fileExists("${config.baseDir}/cypress/videos")) {
+        sh "mv ${config.baseDir}/cypress/videos ${testVideoOutput}"
+      }
+
+      def integrationTestTarName = "${config.project}-${config.component}-${config.buildNumber}-e2e.tar.gz"
+      sh "tar -czf \"${integrationTestTarName}\" -C \"${testVideoOutput}\" ."
+      archiveArtifacts integrationTestTarName  
     }
   }
 
