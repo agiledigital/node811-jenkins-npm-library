@@ -32,7 +32,9 @@ def call(Map config) {
       stage('Test') {
         withEnv([
           "CI=true",
-          "TZ=UTC"
+          "TZ=UTC",
+          // TODO: move this to somewhere else, this is needed for E2E test application build to have right callback URL.
+          "REACT_APP_AWS_COGNITO_AUTH_CALLBACK_URL=http://localhost:3000"
         ]) {
           npm 'test'
           junit allowEmptyResults: true, testResults: testOutput
