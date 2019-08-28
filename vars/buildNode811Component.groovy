@@ -62,7 +62,11 @@ def call(Map config) {
 
     container('node811-builder') {
       stage('Build') {
-        npm "run build"
+        withEnv([
+          "REACT_APP_VERSION=${config.buildNumber}"
+        ]) {
+          npm "run build"
+        }
       }
 
       stage('Package') {
