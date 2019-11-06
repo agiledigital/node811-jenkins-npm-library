@@ -28,6 +28,18 @@ def call(Map config) {
       npm "install"
     }
 
+    stage('Build') {
+      withEnv([
+        "CI=true",
+        "TZ=UTC",
+        // TODO: move this to somewhere else, this is needed for E2E test application build to have right callback URL.
+        "REACT_APP_AWS_COGNITO_AUTH_CALLBACK_URL=http://localhost:3000",
+        "REACT_APP_VERSION=${config.buildNumber}"
+      ]) {
+        npm 'run build'
+      }
+    }
+    
     try {
       stage('Test') {
         withEnv([
