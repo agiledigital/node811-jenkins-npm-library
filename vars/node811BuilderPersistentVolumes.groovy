@@ -7,8 +7,8 @@ def call(Map config) {
     ],
     [
       path: '/root/.cache',
-      claimName: "${config.project}-home-jenkins-cache",
-      sizeGiB: 2
+      claimName: "${config.project}-home-jenkins-npm",
+      sizeGiB: 1
     ]
   ]
 }

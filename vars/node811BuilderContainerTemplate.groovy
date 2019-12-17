@@ -6,8 +6,6 @@ def call() {
       alwaysPullImage: true,
       command: 'cat',
       ttyEnabled: true,
-      resourceLimitCpu:'1',
-      resourceRequestCpu:'750m'
     )
   ]
 }
